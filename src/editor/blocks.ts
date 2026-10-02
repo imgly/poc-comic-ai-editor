@@ -7,8 +7,8 @@
  *  - Object: an area that received a generated image; a regular image block from then on.
  *    Tagged `comic/role = object`.
  *
- * Block metadata is used for these tags because it is saved with the scene and because changing
- * it is an engine event, which makes CE.SDK's UI re-render.
+ * Block metadata is used for these tags because it is saved with the scene and because CE.SDK's
+ * UI re-renders when metadata it has read changes.
  */
 import type { CreativeEngine } from '@cesdk/cesdk-js';
 import { t } from './i18n';
@@ -60,15 +60,22 @@ export function selectedObject(engine: CreativeEngine): number | null {
 /** Blocks for which "Place object" is running right now. */
 const placing = new Set<number>();
 
-export function isPlacing(id: number): boolean {
+/**
+ * Whether "Place object" is running for this block. The answer comes from memory, so an undo can
+ * never bring back a stale "busy" object. The metadata is read anyway: a canvas-menu component
+ * re-renders when engine state it has read changes, so this read is what makes the button update
+ * when `setPlacing` writes the flag.
+ */
+export function isPlacing(engine: CreativeEngine, id: number): boolean {
+  try {
+    if (engine.block.hasMetadata(id, BUSY_KEY)) engine.block.getMetadata(id, BUSY_KEY);
+  } catch {
+    // The block is gone; the answer below still holds.
+  }
   return placing.has(id);
 }
 
-/**
- * The running state itself is kept in memory, so an undo can never bring back a stale "busy"
- * object. The metadata write only serves as the engine event that makes the canvas menu
- * re-render (see customization/canvas.ts).
- */
+/** Starts or ends the busy state and writes the flag that re-renders the canvas menu. */
 export function setPlacing(engine: CreativeEngine, id: number, busy: boolean): void {
   if (busy) placing.add(id);
   else placing.delete(id);

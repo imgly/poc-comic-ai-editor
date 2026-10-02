@@ -154,7 +154,7 @@ cesdk.ui.registerPanel(BACKGROUND_PANEL, ({ builder, engine, state }) => {
 
 The panels contain no markup or CSS of their own. They inherit the theme, spacing, docking and
 keyboard handling of the stock panels, which is why they look native. The render function runs
-again on every engine event and whenever a `state` value changes. Asynchronous work (loading the
+again when engine state it reads or a `state` value changes. Asynchronous work (loading the
 model list, generating) re-renders the panel by bumping a counter state; see `useRefresh` in
 `panels/shared.ts`.
 
@@ -172,10 +172,11 @@ platzieren" for placed objects. Four things are worth knowing:
 - **Buttons, no text.** The canvas menu renders buttons and dropdowns; `builder.Text` is ignored
   there. The counter "Variante 2 von 4" is a button without an action, turned into a label by one
   CSS rule in `theme.ts`.
-- **State lives in block metadata.** Canvas-menu components re-render on engine events, not on
-  component state. The variant list (`comic/variants` on the page) and the busy flag of "Place
-  object" (`comic/busy` on the object) are therefore stored as block metadata: writing metadata is
-  an engine event and updates the menu.
+- **State lives in block metadata.** Canvas-menu components re-render when engine state that
+  their render function has read changes, not on component state. The variant list
+  (`comic/variants` on the page) and the busy flag of "Place object" (`comic/busy` on the object)
+  are therefore written to block metadata, and the render function reads them. A write to
+  metadata the render function never read does not update the menu.
 - **One menu per block type.** A component order can be filtered by edit mode but not by block
   type. To give the page its own menu, `canvas.ts` swaps the order between `PAGE_MENU` and
   `BLOCK_MENU` whenever the selection changes.

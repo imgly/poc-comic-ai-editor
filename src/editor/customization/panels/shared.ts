@@ -12,7 +12,7 @@ import { loadModels } from '../../variants';
 type Ctx = BuilderRenderFunctionContext<ComponentPayload>;
 
 /**
- * Builder panels re-render on engine events and when a panel `state` value changes. Async work
+ * Builder panels re-render when engine state they read or a panel `state` value changes. Async work
  * (model list, generation) keeps the setter of a counter state and bumps it to trigger a render.
  */
 export function useRefresh(ctx: Ctx, id: string): () => void {

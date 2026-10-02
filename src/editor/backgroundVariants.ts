@@ -1,7 +1,8 @@
 /**
  * Background variants that are still up for selection. They live in the page's metadata: the
- * canvas menu re-renders on engine events, so a metadata change is what updates the stepper
- * ("Variante 2 von 4"). The page fill always shows the current variant.
+ * canvas menu re-renders when engine state it has read changes, so the stepper reads this
+ * metadata and a write to it updates the counter ("Variante 2 von 4"). The page fill always
+ * shows the current variant.
  */
 import type { CreativeEngine } from '@cesdk/cesdk-js';
 import { applyBackground, selectOnly } from './blocks';

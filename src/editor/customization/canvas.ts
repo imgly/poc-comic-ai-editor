@@ -12,9 +12,9 @@
  *
  *  - Canvas-menu components are built with the builder API. The menu renders buttons and
  *    dropdowns; `builder.Text` is ignored there.
- *  - They re-render on engine events, not on component state. What should update the menu is
- *    therefore written to block metadata (the variant list, a flag when "Place object" starts and
- *    ends): writing metadata is an engine event.
+ *  - They re-render when engine state that the render function has read changes, not on component
+ *    state. What should update the menu is therefore written to block metadata (the variant list,
+ *    a flag when "Place object" starts and ends), and the render function reads it.
  *  - A component order can only be filtered by edit mode, not by block type. To give the page its
  *    own menu, the order is swapped whenever the selection changes.
  *  - A button with icon and label loses its label when space is tight; label-only buttons keep it.
@@ -111,7 +111,7 @@ function registerPlaceObject(cesdk: CreativeEditorSDK): void {
   cesdk.ui.registerComponent(PLACE_OBJECT, ({ builder, engine }) => {
     const object = selectedObject(engine);
     if (object === null) return;
-    const busy = isPlacing(object);
+    const busy = isPlacing(engine, object);
     builder.Button(`${PLACE_OBJECT}.button`, {
       label: busy ? t('place.busy') : t('place'),
       tooltip: t('place.tooltip'),
@@ -119,7 +119,7 @@ function registerPlaceObject(cesdk: CreativeEditorSDK): void {
       isLoading: busy,
       isDisabled: busy,
       onClick: async () => {
-        if (isPlacing(object)) return;
+        if (isPlacing(engine, object)) return;
         setPlacing(engine, object, true);
         const notification = cesdk.ui.showNotification({ message: t('place.progress.render'), type: 'loading', duration: 'infinite' });
         try {

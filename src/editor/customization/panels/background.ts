@@ -4,7 +4,7 @@
  * Model dropdown, prompt and Generate. Generate produces four variants; the first one that
  * arrives is shown on the page, and the page's canvas menu steps through them (../canvas.ts).
  *
- * The render function below runs on every engine event and whenever a `ctx.state` value changes;
+ * The render function below runs again when engine state it reads or a `ctx.state` value changes;
  * it describes the panel from top to bottom with builder calls.
  */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
