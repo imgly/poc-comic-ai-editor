@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+/*
+ * CUSTOMIZATION: design tokens
+ *
+ * The look of the whole app: neutral near-black surfaces, a light blue accent with dark text on
+ * it, pill-shaped primary buttons, Roboto. The React screens (start, loading, login, header,
+ * canvas overlays) use these --cs-* tokens directly; the CE.SDK theme further down maps them onto
+ * the editor's own theme variables. Change a value here and both follow.
+ */
+:root {
+  --cs-canvas: #151515;
+  --cs-bar: #111111;
+  --cs-panel: #222222;
+  --cs-card: #252525;
+  --cs-raised: #2c2c2c;
+  --cs-raised-hover: #363636;
+  --cs-inset: #1e1e1e;
+  --cs-input: #1b1b1b;
+  --cs-selected: #262b33;
+  --cs-border: rgb(255 255 255 / 0.14);
+  --cs-border-strong: rgb(255 255 255 / 0.28);
+  --cs-text: #f3f3f3;
+  --cs-text-soft: rgb(243 243 243 / 0.62);
+  --cs-text-muted: rgb(243 243 243 / 0.45);
+  --cs-accent: #8cbcff;
+  --cs-accent-hover: #a8ccff;
+  --cs-accent-pressed: #74abf5;
+  --cs-on-accent: #0d1522;
+  --cs-eyebrow: #c7d263;
+  --cs-danger: #ff9fb0;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: var(--font-roboto), "Roboto", ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.cesdk-host {
+  position: absolute;
+  inset: 0;
+}
+
+/*
+ * CUSTOMIZATION: CE.SDK theme
+ *
+ * The editor reads its colours, radii and typography from --ubq-* variables. CE.SDK sets them
+ * through the classes `ubq-dark` / `ubq-light` (colours), `ubq-modern` (typography, radii) and
+ * `ubq-static` on the container around the editor; the rules below override the stock values with
+ * a more specific selector. The variables are inherited into the editor's shadow root. The full
+ * list of variables and their stock values is in
+ * node_modules/@cesdk/cesdk-js/assets/ui/stylesheets/cesdk-themes.css.
+ *
+ * See https://img.ly/docs/cesdk/js/user-interface/appearance/theming-4b0938/
+ *
+ * The editor boots in its light theme until `setTheme('dark')` runs during setup, so the colours
+ * apply to that class as well: whatever shows through while loading is already dark.
+ */
+.cesdk-host .ubq-dark,
+.cesdk-host .ubq-light {
+  --ubq-canvas: var(--cs-canvas);
+  --ubq-elevation-1: var(--cs-panel);
+  --ubq-elevation-2: var(--cs-card);
+  --ubq-elevation-3: var(--cs-raised);
+  --ubq-elevation-1-blur: rgb(34 34 34 / 0.85);
+  --ubq-elevation-2-blur: rgb(37 37 37 / 0.85);
+  --ubq-elevation-3-blur: rgb(44 44 44 / 0.85);
+  --ubq-foreground-default: var(--cs-text);
+  --ubq-foreground-light: rgb(243 243 243 / 0.7);
+  --ubq-foreground-info: rgb(243 243 243 / 0.55);
+  --ubq-foreground-accent: var(--cs-on-accent);
+  --ubq-foreground-active: var(--cs-accent);
+  --ubq-foreground-danger-default: var(--cs-on-accent);
+  --ubq-foreground-notice-default: var(--cs-on-accent);
+  --ubq-interactive-default: var(--cs-raised);
+  --ubq-interactive-hover: var(--cs-raised-hover);
+  --ubq-interactive-pressed: #262626;
+  --ubq-interactive-selected: var(--cs-raised);
+  --ubq-interactive-input-hover: #202020;
+  --ubq-interactive-accent-default: var(--cs-accent);
+  --ubq-interactive-accent-hover: var(--cs-accent-hover);
+  --ubq-interactive-accent-pressed: var(--cs-accent-pressed);
+  --ubq-interactive-active-default: var(--cs-accent);
+  --ubq-interactive-active-hover: var(--cs-accent-hover);
+  --ubq-interactive-active-pressed: var(--cs-accent-pressed);
+  --ubq-interactive-group-hover: var(--cs-raised);
+  --ubq-interactive-group-active-default: var(--cs-raised-hover);
+  --ubq-interactive-group-active-hover: #404040;
+  --ubq-input-default: var(--cs-input);
+  --ubq-input-hover: #202020;
+  --ubq-progress: #6b6b6b;
+  --ubq-border-default: var(--cs-border);
+  --ubq-stroke-contrast-1: rgb(243 243 243 / 0.12);
+  --ubq-stroke-contrast-2: rgb(243 243 243 / 0.25);
+  --ubq-stroke-contrast-3: rgb(243 243 243 / 0.9);
+  --ubq-focus-default: var(--cs-accent);
+  --ubq-focus-outline: rgb(140 188 255 / 0.35);
+  --ubq-overlay: rgb(17 17 17 / 0.8);
+}
+
+.cesdk-host .ubq-static {
+  --ubq-static-selection-frame: var(--cs-accent);
+}
+
+.cesdk-host .ubq-modern,
+.cesdk-host .ubq-normal {
+  --ubq-typography-font_family: var(--font-roboto), "Roboto", sans-serif;
+  --ubq-typography-headline-l-weight: 500;
+  --ubq-typography-headline-m-weight: 500;
+  --ubq-typography-label-m-weight: 400;
+  --ubq-typography-label-s-weight: 400;
+  --ubq-typography-body-m-weight: 400;
+  --ubq-typography-input-m-weight: 400;
+  --ubq-typography-button-m-weight: 500;
+  --ubq-border_radius-s: 6px;
+  --ubq-border_radius-m: 8px;
+  --ubq-border_radius-l: 10px;
+  --ubq-border_radius-xl: 16px;
+}
