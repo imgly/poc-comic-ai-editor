@@ -23,10 +23,10 @@
  * @see https://img.ly/docs/cesdk/js/user-interface/ui-extensions/register-new-component-b04a04/
  */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import { placeObject } from '../ai/placeObject';
-import { acceptBackgroundVariant, backgroundVariants, stepBackgroundVariant } from '../backgroundVariants';
-import { isPlacing, selectedObject, selectedPage, setPlacing } from '../blocks';
-import { t } from '../i18n';
+import { placeObject } from '@/editor/ai/placeObject';
+import { acceptBackgroundVariant, backgroundVariants, stepBackgroundVariant } from '@/editor/engine/backgroundVariants';
+import { isPlacing, selectedObject, selectedPage, setPlacing } from '@/editor/engine/blocks';
+import { t } from '@/lib/i18n';
 import { PLACE_OBJECT, VARIANT_STEPPER, VARIANT_STEPPER_LABEL } from './ids';
 
 /** Menu of the selected page: the variant stepper only (it renders nothing without variants). */
@@ -66,7 +66,7 @@ export function setupCanvasMenu(cesdk: CreativeEditorSDK): void {
 
 /**
  * Variant stepper: shown on the page while background variants are up for selection. The state
- * (image URIs, shown index, total) is kept in the page's metadata, see backgroundVariants.ts.
+ * (image URIs, shown index, total) is kept in the page's metadata, see engine/backgroundVariants.ts.
  */
 function registerVariantStepper(cesdk: CreativeEditorSDK): void {
   cesdk.ui.registerComponent(VARIANT_STEPPER, ({ builder, engine }) => {

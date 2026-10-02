@@ -192,6 +192,19 @@ export function getImageAI(): Promise<ImageAI> {
   return cached;
 }
 
+const modelLists = new Map<Capability, Promise<ImageModel[]>>();
+
+/** The models of a capability, loaded once. A failed attempt is not kept, so a later call tries again. */
+export function loadModels(capability: Capability): Promise<ImageModel[]> {
+  let list = modelLists.get(capability);
+  if (!list) {
+    list = getImageAI().then((ai) => ai.listModels(capability));
+    list.catch(() => modelLists.delete(capability));
+    modelLists.set(capability, list);
+  }
+  return list;
+}
+
 async function createImageAI(): Promise<ImageAI> {
   // Mock mode is for a server without a key only. A failing token request is an error and is
   // shown in the panels, so a wrong key or an outage never passes for mock mode.

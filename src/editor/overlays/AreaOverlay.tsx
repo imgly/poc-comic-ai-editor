@@ -1,60 +1,24 @@
 'use client';
 
 /**
- * Canvas overlays for the Create Object tool, drawn in the DOM on top of the CE.SDK canvas.
+ * CUSTOMIZATION: drawing an object area
  *
- * `AreaOverlay` is the drag-to-mark layer: active while the panel waits for an area, a drag on the
- * page creates an area block. Only the snapped rectangle is drawn while dragging (see `snapArea`);
- * a ratio strip, a large label inside the rectangle and a tag show which ratio it snapped to.
- * `AreaTag` labels the selected empty area with its ratio and size, also while it is resized.
+ * The one interaction CE.SDK has no stock tool for, so it is an own React layer on top of the
+ * canvas. It is active while the Create Object panel waits for an area: a drag on the page
+ * creates an area block. Only the snapped rectangle is drawn while dragging (see `snapArea` in
+ * ratios.ts); a ratio strip, a large label inside the rectangle and a tag show which ratio it
+ * snapped to.
  *
- * Screen rectangles are read from the engine each frame so panning and zooming stay in sync.
+ * The page's screen rectangle is read from the engine each frame, so panning and zooming stay in
+ * sync.
  */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
 import { useEffect, useRef, useState } from 'react';
-import { blockSize, createAreaBlock, currentPage, ratioLabel, roleOf } from './blocks';
-import { t } from './i18n';
-import { RATIOS_TALL_TO_WIDE, snapArea, type Point, type SnappedArea } from './ratios';
-import { editorStore, useEditorState } from './store';
-
-type Rect = { left: number; top: number; width: number; height: number };
-type Frame = { view: Rect; block: Rect };
-
-/**
- * Locates the engine canvas and the visible canvas area inside the editor's open shadow DOM.
- * `getScreenSpaceBoundingBoxXYWH` is relative to the `<cesdk-canvas>` element, which spans the
- * whole editor. The canvas container is the part that dock, bars and panels leave free; the
- * canvas viewport (the fallback) still reaches under docked panels in 1.83.
- */
-function findCanvasElements(root: Element): { canvas: Element; viewport: Element } | null {
-  const walk = (scope: Element | ShadowRoot): { canvas: Element; viewport: Element } | null => {
-    const canvas = scope.querySelector('cesdk-canvas, canvas');
-    if (canvas) {
-      const viewport = scope.querySelector('[class*="Editor-module__canvasContainer"]') ?? scope.querySelector('[class*="canvasViewport"]') ?? canvas;
-      return { canvas, viewport };
-    }
-    for (const child of scope.children) {
-      const r = (child.shadowRoot && walk(child.shadowRoot)) || walk(child);
-      if (r) return r;
-    }
-    return null;
-  };
-  return walk(root);
-}
-
-/** The canvas viewport and a block's rectangle, both in the host element's coordinates. */
-function measure(cesdk: CreativeEditorSDK, host: HTMLElement, block: number): Frame | null {
-  const found = findCanvasElements(host);
-  if (!found) return null;
-  const hostBox = host.getBoundingClientRect();
-  const canvasBox = found.canvas.getBoundingClientRect();
-  const viewBox = found.viewport.getBoundingClientRect();
-  const [x, y, w, h] = cesdk.engine.block.getScreenSpaceBoundingBoxXYWH([block]);
-  return {
-    view: { left: viewBox.left - hostBox.left, top: viewBox.top - hostBox.top, width: viewBox.width, height: viewBox.height },
-    block: { left: canvasBox.left - hostBox.left + x, top: canvasBox.top - hostBox.top + y, width: w, height: h },
-  };
-}
+import { blockSize, createAreaBlock, currentPage } from '@/editor/engine/blocks';
+import { t } from '@/lib/i18n';
+import { RATIOS_TALL_TO_WIDE, snapArea, type Point, type SnappedArea } from '../ratios';
+import { editorStore, useEditorState } from '../store';
+import { measure, type Frame } from './canvasFrame';
 
 /** Drags whose snapped rectangle stays below this edge (screen pixels) count as accidental clicks. */
 const MIN_DRAG = 8;
@@ -176,58 +140,6 @@ export function AreaOverlay({ cesdk, host }: { cesdk: CreativeEditorSDK; host: H
           })}
         </div>
       </div>
-    </div>
-  );
-}
-
-type Tag = { left: number; top: number; view: Rect; ratio: string; size: string };
-
-/**
- * Ratio and size of the selected empty area, as a tag in its top-left corner. Inside the area,
- * because the space above and below it belongs to the canvas menu and the rotate handle; an area
- * too small to hold the tag gets it on its right side.
- */
-export function AreaTag({ cesdk, host }: { cesdk: CreativeEditorSDK; host: HTMLElement | null }) {
-  const { markArea } = useEditorState();
-  const [tag, setTag] = useState<Tag | null>(null);
-
-  useEffect(() => {
-    if (!host) return;
-    let raf = 0;
-    let last = 'null';
-    const tick = () => {
-      let next: Tag | null = null;
-      try {
-        const { engine } = cesdk;
-        const selected = engine.block.findAllSelected();
-        if (selected.length === 1 && roleOf(engine, selected[0]) === 'area') {
-          const frame = measure(cesdk, host, selected[0]);
-          const { width, height } = blockSize(engine, selected[0]);
-          if (frame) {
-            const fits = frame.block.width >= 130 && frame.block.height >= 40;
-            next = { left: frame.block.left - frame.view.left + (fits ? 6 : frame.block.width + 10), top: frame.block.top - frame.view.top + (fits ? 6 : 0), view: frame.view, ratio: ratioLabel(width, height), size: `${Math.round(width)} × ${Math.round(height)}` };
-          }
-        }
-      } catch {
-        // The engine is going away; the component unmounts with it.
-      }
-      const key = JSON.stringify(next);
-      if (key !== last) {
-        last = key;
-        setTag(next);
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [cesdk, host]);
-
-  if (!tag || markArea) return null;
-  return (
-    <div className="absolute overflow-hidden pointer-events-none" style={tag.view}>
-      <span className="absolute text-xs leading-none text-(--cs-on-accent) bg-(--cs-accent) px-2 py-[5px] rounded-[3px] whitespace-nowrap" style={{ left: tag.left, top: tag.top }}>
-        <b className="font-bold">{tag.ratio}</b> · {tag.size}
-      </span>
     </div>
   );
 }

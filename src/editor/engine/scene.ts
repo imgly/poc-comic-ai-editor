@@ -1,8 +1,8 @@
 /** The scene the editor starts with: one empty page at the size chosen on the start screen. */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import { t } from './i18n';
-import type { PagePreset } from './presets';
-import { EMPTY_PAGE } from './tokens';
+import { t } from '@/lib/i18n';
+import type { PagePreset } from '../ratios';
+import { EMPTY_PAGE } from '../tokens';
 
 export function createScene(cesdk: CreativeEditorSDK, preset: PagePreset): void {
   const { engine } = cesdk;

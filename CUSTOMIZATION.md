@@ -11,7 +11,7 @@ header, so a search for that word lists them all.
 | --- | --- | --- |
 | 1. Base configuration | `src/imgly/config/` | The configuration of IMG.LY's [Advanced Design Editor starter kit](https://github.com/imgly/starterkit-advanced-design-editor-ts-web) for CE.SDK 1.83.0, copied **unmodified**. It sets up the full advanced editor: features, UI layout, actions, keyboard shortcuts, engine settings. |
 | 2. Customizations | `src/editor/customization/` and `src/app/globals.css` | Everything this PoC changes about the stock editor. Applied on top of layer 1 through public CE.SDK APIs, one file per part of the editor. |
-| 3. Own UI | `src/editor/*.tsx`, `src/app/` | React screens and overlays around and on top of the editor: start, loading and login screen, header, the area overlays on the canvas. Not CE.SDK, but styled with the same design tokens. |
+| 3. Own UI | `src/components/`, `src/editor/overlays/`, `src/app/` | React screens and overlays around and on top of the editor: start, loading and login screen, header, the area overlays on the canvas. Not CE.SDK, but styled with the same design tokens. |
 
 Keeping layer 1 untouched has a practical benefit: when IMG.LY updates the starter kit, the folder
 can be replaced with the new version and compared file by file. Nothing in it has to be merged.
@@ -28,16 +28,16 @@ complete list of customizations.
 | Colours, radii, font of the editor | CE.SDK theme variables (`--ubq-*`) | [`src/app/globals.css`](src/app/globals.css) | Edit a `--cs-*` token at the top of the file |
 | Selection frame and guide colours | Engine settings | [`customization/theme.ts`](src/editor/customization/theme.ts), [`tokens.ts`](src/editor/tokens.ts) | Change `ACCENT` in `tokens.ts` |
 | Pill-shaped primary buttons and canvas menu | CSS injected into the editor's shadow root | [`customization/theme.ts`](src/editor/customization/theme.ts) | Edit or remove `SHADOW_CSS` |
-| German UI | `cesdk.i18n.setLocale`, `setTranslations` | [`customization/translations.ts`](src/editor/customization/translations.ts), [`i18n.ts`](src/editor/i18n.ts) | Edit texts in `i18n.ts`; `NEXT_PUBLIC_UI_LOCALE=en` for English |
+| German UI | `cesdk.i18n.setLocale`, `setTranslations` | [`customization/translations.ts`](src/editor/customization/translations.ts), [`lib/i18n.ts`](src/lib/i18n.ts) | Edit texts in `i18n.ts`; `NEXT_PUBLIC_UI_LOCALE=en` for English |
 | Single page, trimmed inspector, inspector only with a selection, layer list | Feature API (`cesdk.feature.enable` / `set`) | [`customization/features.ts`](src/editor/customization/features.ts) | Delete a line to bring a stock feature back |
 | Top bar: undo/redo, zoom, export | Component order of `ly.img.navigation.bar` | [`customization/navigationBar.ts`](src/editor/customization/navigationBar.ts) | Reorder, add or remove component ids |
 | Dock with Hintergrund, Objekt erstellen, Ebenen | Component order of `ly.img.dock`, stock dock button with own `onClick` | [`customization/dock.ts`](src/editor/customization/dock.ts) | Add an entry for a new tool |
 | Panels "Hintergrund" and "Objekt erstellen" | Custom panels: `cesdk.ui.registerPanel` + builder API | [`customization/panels/`](src/editor/customization/panels/) | Add builder calls to a panel's render function |
-| `‹ Variante 2 von 4 › Übernehmen` on the page | Custom component in `ly.img.canvas.menu` | [`customization/canvas.ts`](src/editor/customization/canvas.ts), [`backgroundVariants.ts`](src/editor/backgroundVariants.ts) | Edit `registerVariantStepper` |
+| `‹ Variante 2 von 4 › Übernehmen` on the page | Custom component in `ly.img.canvas.menu` | [`customization/canvas.ts`](src/editor/customization/canvas.ts), [`engine/backgroundVariants.ts`](src/editor/engine/backgroundVariants.ts) | Edit `registerVariantStepper` |
 | "Objekt platzieren" on a placed object | Custom component in `ly.img.canvas.menu` | [`customization/canvas.ts`](src/editor/customization/canvas.ts), [`ai/placeObject.ts`](src/editor/ai/placeObject.ts) | Edit `registerPlaceObject`, `BLOCK_MENU` |
 | Object areas keep their aspect ratio | Engine setting and feature predicate bound to the selection | [`customization/areas.ts`](src/editor/customization/areas.ts) | — |
-| Drag-to-mark rectangle with ratio snapping, ratio strip, area tag | Own React overlay on top of the canvas | [`AreaOverlay.tsx`](src/editor/AreaOverlay.tsx), [`ratios.ts`](src/editor/ratios.ts) | Edit `RATIOS`; restyle the overlay |
-| Start screen, loading screen, header | Own React UI | [`StartScreen.tsx`](src/editor/StartScreen.tsx), [`EditorHost.tsx`](src/editor/EditorHost.tsx) | Plain React and Tailwind classes |
+| Drag-to-mark rectangle with ratio snapping, ratio strip, area tag | Own React overlay on top of the canvas | [`overlays/`](src/editor/overlays/), [`ratios.ts`](src/editor/ratios.ts) | Edit `RATIOS`; restyle the overlay |
+| Start screen, loading screen, header | Own React UI | [`src/components/`](src/components/) | Plain React and Tailwind classes |
 | Login screen | Own React UI plus Next.js proxy | [`src/app/login/`](src/app/login/), [`src/proxy.ts`](src/proxy.ts) | See README, "Password protection" |
 | Models, prompts, generation | IMG.LY AI Gateway | [`ai/gateway.ts`](src/editor/ai/gateway.ts), panels | See "AI" below |
 
@@ -85,7 +85,7 @@ Docs: [Theming](https://img.ly/docs/cesdk/js/user-interface/appearance/theming-4
 
 ## Language
 
-`src/editor/i18n.ts` holds the texts the PoC adds, in German and English, and exports `t(key)`.
+`src/lib/i18n.ts` holds the texts the PoC adds, in German and English, and exports `t(key)`.
 The default prompts in the two panels are the one exception; they are German.
 CE.SDK's own UI is switched with `cesdk.i18n.setLocale`. Two kinds of labels are looked up by
 CE.SDK itself and are therefore registered as translations in `translations.ts`: dock labels and
@@ -159,7 +159,7 @@ model list, generating) re-renders the panel by bumping a counter state; see `us
 `panels/shared.ts`.
 
 The four object variants are shown with `builder.Library`, the stock asset library component, fed
-by a local asset source per area (`src/editor/variants.ts`).
+by a local asset source per area (`src/editor/engine/objectVariants.ts`).
 
 Docs: [Create a custom panel](https://img.ly/docs/cesdk/js/user-interface/ui-extensions/create-custom-panel-d87b83/)
 
@@ -190,10 +190,10 @@ Docs: [Canvas menu](https://img.ly/docs/cesdk/js/user-interface/customization/ca
 
 An **area** is the empty rectangle an object is generated into. In the engine it is a graphic
 block tagged with metadata `comic/role = area`; when a variant is placed, the block gets the image
-as its fill and the tag `object` (`src/editor/blocks.ts`).
+as its fill and the tag `object` (`src/editor/engine/blocks.ts`).
 
 Drawing an area is the one interaction CE.SDK has no stock tool for, so it is an own React overlay
-on top of the canvas ([`AreaOverlay.tsx`](src/editor/AreaOverlay.tsx)):
+on top of the canvas ([`overlays/AreaOverlay.tsx`](src/editor/overlays/AreaOverlay.tsx)):
 
 - It is active only while the "Objekt erstellen" panel waits for an area.
 - Pointer positions are converted to page pixels with the page's screen rectangle, which the
@@ -203,10 +203,10 @@ on top of the canvas ([`AreaOverlay.tsx`](src/editor/AreaOverlay.tsx)):
 - On release, `createAreaBlock` creates the block. From then on it is a regular CE.SDK block with
   the stock selection, handles, inspector and layer list entry.
 
-`AreaTag` in the same file shows ratio and size on the selected area.
+[`AreaTag.tsx`](src/editor/overlays/AreaTag.tsx) next to it shows ratio and size on the selected area.
 
 The overlay has to know which part of the editor is free canvas, without dock and panels. It finds
-that element inside the editor's shadow root by class name (`findCanvasElements`). Like the
+that element inside the editor's shadow root by class name (`overlays/canvasFrame.ts`). Like the
 shadow-root CSS, this relies on CE.SDK's markup and should be checked after an SDK update.
 
 After drawing, the area keeps its ratio (`customization/areas.ts`): while an area is selected, the
@@ -220,7 +220,7 @@ ratio strip and the size dropdown of the panel all read that list.
 ## Start, loading and login screen
 
 These are plain React components with Tailwind classes that reference the `--cs-*` tokens, for
-example `bg-(--cs-card)`. They are not part of CE.SDK. The loading screen in `EditorHost.tsx`
+example `bg-(--cs-card)`. They are not part of CE.SDK. The loading screen (`src/components/LoadingScreen.tsx`)
 stays on top of the editor until `setupEditor` has finished, so CE.SDK's own loading state is
 never visible. CE.SDK boots in its light theme for a moment before `setTheme('dark')` runs;
 `globals.css` therefore applies the theme colours to `.ubq-light` as well.
@@ -249,7 +249,7 @@ and commented in the code:
 | Spot | File | Depends on |
 | --- | --- | --- |
 | Pill shapes | `customization/theme.ts`, `SHADOW_CSS` | CE.SDK class names |
-| Free canvas area for the overlays | `AreaOverlay.tsx`, `findCanvasElements` | CE.SDK class name `Editor-module__canvasContainer` |
+| Free canvas area for the overlays | `overlays/canvasFrame.ts`, `findCanvasElements` | CE.SDK class name `Editor-module__canvasContainer` |
 | Injecting the style element | `customization/theme.ts` | The editor's shadow host `#root-shadow` |
 
 Everything else uses documented APIs: theme variables, `setTheme`, `setLocale`,

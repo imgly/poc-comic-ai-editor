@@ -2,15 +2,15 @@
 
 /**
  * Mounts CE.SDK through its React wrapper and runs the setup once the editor instance exists:
- * the customizations (`./customization`), the empty scene (`./scene.ts`) and the first zoom.
+ * the customizations (`./customization`), the empty scene (`./engine/scene.ts`) and the first zoom.
  */
 import CreativeEditor from '@cesdk/cesdk-js/react';
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { setupEditor, watchPanels } from './customization';
-import { t } from './i18n';
-import type { PagePreset } from './presets';
-import { createScene } from './scene';
+import { t } from '@/lib/i18n';
+import type { PagePreset } from './ratios';
+import { createScene } from './engine/scene';
 
 const LICENSE = process.env.NEXT_PUBLIC_CESDK_LICENSE ?? '';
 

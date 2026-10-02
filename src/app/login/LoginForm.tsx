@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
-import { t } from '@/editor/i18n';
+import { t } from '@/lib/i18n';
 
 /** The password form, in the same card layout and design tokens as the start screen. */
 export function LoginForm() {

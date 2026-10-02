@@ -2,7 +2,7 @@
  * CUSTOMIZATION: object areas keep their aspect ratio
  *
  * An area (the empty rectangle an object is generated into) snaps to an aspect ratio when it is
- * drawn (`src/editor/AreaOverlay.tsx`) and must keep it afterwards, because the ratio is what the
+ * drawn (`src/editor/overlays/AreaOverlay.tsx`) and must keep it afterwards, because the ratio is what the
  * model is asked for. CE.SDK has no per-block ratio lock, so two stock switches are bound to the
  * selection:
  *
@@ -15,7 +15,7 @@
  * @see https://img.ly/docs/cesdk/js/settings-970c98/
  */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import { roleOf } from '../blocks';
+import { roleOf } from '@/editor/engine/blocks';
 
 export function setupAreas(cesdk: CreativeEditorSDK): void {
   const { engine } = cesdk;

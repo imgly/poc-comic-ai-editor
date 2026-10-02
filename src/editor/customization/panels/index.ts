@@ -16,8 +16,8 @@
  * @see https://img.ly/docs/cesdk/js/user-interface/ui-extensions/create-custom-panel-d87b83/
  */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import { editorStore } from '../../store';
-import { abortAllGenerations } from '../../variants';
+import { editorStore } from '@/editor/store';
+import { abortAllGenerations } from '@/editor/ai/generateVariants';
 import { BACKGROUND_PANEL, LAYERS_PANEL, OBJECT_PANEL } from '../ids';
 import { registerBackgroundPanel } from './background';
 import { registerCreateObjectPanel } from './createObject';

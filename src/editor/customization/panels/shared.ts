@@ -5,9 +5,8 @@
  * re-render a builder panel from asynchronous code.
  */
 import type { BuilderRenderFunctionContext, ComponentPayload } from '@cesdk/cesdk-js';
-import { DEFAULT_MODEL, type Capability, type ImageModel } from '../../ai/gateway';
-import { t } from '../../i18n';
-import { loadModels } from '../../variants';
+import { DEFAULT_MODEL, loadModels, type Capability, type ImageModel } from '@/editor/ai/gateway';
+import { t } from '@/lib/i18n';
 
 type Ctx = BuilderRenderFunctionContext<ComponentPayload>;
 

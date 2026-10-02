@@ -2,13 +2,13 @@
 
 /**
  * Start screen: aspect ratio and image size of the canvas. Plain React outside of CE.SDK; the
- * chosen size is handed to the editor, which creates the page with it (`./scene.ts`). The ratios
- * and sizes on offer are defined in `./ratios.ts`.
+ * chosen size is handed to the editor, which creates the page with it
+ * (`src/editor/engine/scene.ts`). The ratios and sizes on offer are defined in
+ * `src/editor/ratios.ts`.
  */
 import { useState } from 'react';
-import { t } from './i18n';
-import { pagePreset, type PagePreset } from './presets';
-import { PAGE_SIZES, RATIOS, ratioValue, type PageSizeId, type Ratio } from './ratios';
+import { t } from '@/lib/i18n';
+import { PAGE_SIZES, pagePreset, RATIOS, ratioValue, type PagePreset, type PageSizeId, type Ratio } from '@/editor/ratios';
 
 const DEFAULT_RATIO = RATIOS.find((r) => r.id === '16:9') ?? RATIOS[0];
 

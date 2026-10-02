@@ -8,8 +8,8 @@
  * the object block is removed, so the object is now part of the picture.
  */
 import type { CreativeEngine } from '@cesdk/cesdk-js';
-import { clearBackgroundVariants } from '../backgroundVariants';
-import { applyBackground, objectPrompt, ratioLabel, roleOf } from '../blocks';
+import { clearBackgroundVariants } from '@/editor/engine/backgroundVariants';
+import { applyBackground, objectPrompt, ratioLabel, roleOf } from '@/editor/engine/blocks';
 import { DEFAULT_MODEL, getImageAI, type ImageAI } from './gateway';
 
 /**

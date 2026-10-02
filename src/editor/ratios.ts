@@ -63,3 +63,16 @@ export function pageDimensions(ratio: Ratio, megapixels: number): { width: numbe
   const height = Math.round(width / value / 16) * 16;
   return { width, height };
 }
+
+/** The page the start screen hands to the editor: an aspect ratio at one of the image sizes. */
+export type PagePreset = {
+  width: number;
+  height: number;
+  /** Human readable ratio, shown next to the size. */
+  ratio: string;
+};
+
+export function pagePreset(ratio: Ratio, size: PageSizeId): PagePreset {
+  const { megapixels } = PAGE_SIZES.find((s) => s.id === size) ?? PAGE_SIZES[1];
+  return { ratio: ratio.id, ...pageDimensions(ratio, megapixels) };
+}

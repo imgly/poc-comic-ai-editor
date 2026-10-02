@@ -11,9 +11,9 @@
  * UI re-renders when metadata it has read changes.
  */
 import type { CreativeEngine } from '@cesdk/cesdk-js';
-import { t } from './i18n';
-import { RATIOS, ratioValue } from './ratios';
-import { ACCENT } from './tokens';
+import { t } from '@/lib/i18n';
+import { RATIOS, ratioValue } from '../ratios';
+import { ACCENT } from '../tokens';
 
 const ROLE_KEY = 'comic/role';
 const PROMPT_KEY = 'comic/prompt';

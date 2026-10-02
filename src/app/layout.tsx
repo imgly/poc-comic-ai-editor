@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
-import { LOCALE } from '@/editor/i18n';
+import { LOCALE } from '@/lib/i18n';
 import './globals.css';
 
 // CUSTOMIZATION: font. Loaded here and exposed as --font-roboto; globals.css hands it to CE.SDK's

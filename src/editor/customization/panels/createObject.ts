@@ -1,18 +1,19 @@
 /**
  * CUSTOMIZATION: custom panel "Objekt erstellen" (Create Object)
  *
- * Needs an area on the page (drawn by dragging while the panel is open, see AreaOverlay.tsx) and
+ * Needs an area on the page (drawn by dragging while the panel is open, see overlays/AreaOverlay.tsx) and
  * a background, which is sent to the model as the style reference. Sections from top to bottom:
  * the area with its size/ratio dropdown, model and prompt with Generate, and the four generated
  * variants as thumbnails (the stock asset library component). Clicking a variant places it into
  * the area. Generate is disabled without an area or a background.
  */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import { applyObject, backgroundImageUri, blockSize, currentPage, ratioLabel, resizeArea, selectedTarget, roleOf } from '../../blocks';
-import { t } from '../../i18n';
-import { RATIOS, ratioValue } from '../../ratios';
-import { editorStore } from '../../store';
-import { ensureVariantSet, generateVariants } from '../../variants';
+import { applyObject, backgroundImageUri, blockSize, currentPage, ratioLabel, resizeArea, selectedTarget, roleOf } from '@/editor/engine/blocks';
+import { t } from '@/lib/i18n';
+import { RATIOS, ratioValue } from '@/editor/ratios';
+import { editorStore } from '@/editor/store';
+import { generateVariants } from '@/editor/ai/generateVariants';
+import { addVariant, clearVariantSet, ensureVariantSet } from '@/editor/engine/objectVariants';
 import { OBJECT_PANEL } from '../ids';
 import { generateState, modelSelect, useRefresh } from './shared';
 
@@ -113,13 +114,15 @@ export function registerCreateObjectPanel(cesdk: CreativeEditorSDK): void {
             let error: string | null = null;
             try {
               const reference = await (await fetch(background)).blob();
-              error = await generateVariants(cesdk, set, {
+              clearVariantSet(cesdk, set);
+              error = await generateVariants({
                 model,
                 prompt: `${prompt.value.trim()} ${STYLE_INSTRUCTION}`,
                 ratio: ratioLabel(size.width, size.height),
                 count,
                 reference,
                 transparent: true,
+                onVariant: (variant) => addVariant(cesdk, set, variant),
                 onProgress: (done, failed) => gen.setProgress(t('progress', { done: done + failed, count })),
               });
             } catch (err) {

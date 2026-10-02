@@ -13,7 +13,7 @@
  * @see https://img.ly/docs/cesdk/js/user-interface/appearance/icons-679e32/
  */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import { selectedTarget } from '../blocks';
+import { selectedTarget } from '@/editor/engine/blocks';
 import { editorStore } from '../store';
 import { BACKGROUND_PANEL, DOCK_LABEL, LAYERS_PANEL, OBJECT_PANEL } from './ids';
 

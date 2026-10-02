@@ -8,10 +8,10 @@
  * it describes the panel from top to bottom with builder calls.
  */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import { addBackgroundVariant, backgroundVariants, finishBackgroundVariants, startBackgroundVariants } from '../../backgroundVariants';
-import { currentPage, ratioLabel } from '../../blocks';
-import { t } from '../../i18n';
-import { generateVariants } from '../../variants';
+import { addBackgroundVariant, backgroundVariants, finishBackgroundVariants, startBackgroundVariants } from '@/editor/engine/backgroundVariants';
+import { currentPage, ratioLabel } from '@/editor/engine/blocks';
+import { t } from '@/lib/i18n';
+import { generateVariants } from '@/editor/ai/generateVariants';
 import { BACKGROUND_PANEL } from '../ids';
 import { generateState, modelSelect, useRefresh } from './shared';
 
@@ -54,12 +54,12 @@ export function registerBackgroundPanel(cesdk: CreativeEditorSDK): void {
             gen.setError('');
             gen.setProgress(t('progress', { done: 0, count }));
             startBackgroundVariants(engine, page, count);
-            const error = await generateVariants(cesdk, null, {
+            const error = await generateVariants({
               model,
               prompt: prompt.value.trim(),
               ratio: ratioLabel(width, height),
               count,
-              onVariant: (uri) => addBackgroundVariant(engine, page, uri),
+              onVariant: ({ uri }) => addBackgroundVariant(engine, page, uri),
               onProgress: (done, failed) => gen.setProgress(t('progress', { done: done + failed, count })),
             });
             finishBackgroundVariants(engine, page);

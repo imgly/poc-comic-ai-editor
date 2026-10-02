@@ -2,7 +2,7 @@
  * CUSTOMIZATION: language
  *
  * CE.SDK ships English and German; `setLocale` switches its whole UI. The PoC's own texts live in
- * `src/editor/i18n.ts` and are passed to the builder API as ready-made strings. Only labels that
+ * `src/lib/i18n.ts` and are passed to the builder API as ready-made strings. Only labels that
  * CE.SDK looks up by key itself have to be registered as translations: dock entries and panel
  * titles (a panel's title is the translation of `panel.<panel id>`).
  *
@@ -12,7 +12,7 @@
  * @see https://img.ly/docs/cesdk/js/user-interface/localization-508e20/
  */
 import type CreativeEditorSDK from '@cesdk/cesdk-js';
-import { LOCALE, t } from '../i18n';
+import { LOCALE, t } from '@/lib/i18n';
 import { BACKGROUND_PANEL, DOCK_LABEL, OBJECT_PANEL } from './ids';
 
 export function setupTranslations(cesdk: CreativeEditorSDK): void {

@@ -74,8 +74,10 @@ your own authentication in front of the app and of the token route.
 ```
 src/
 ├── proxy.ts                      Password gate
-├── lib/sitePassword.ts
-├── app/                          Next.js App Router
+├── lib/
+│   ├── i18n.ts                   All texts, German and English
+│   └── sitePassword.ts           Password hashing and session check
+├── app/                          Next.js App Router: routes only
 │   ├── layout.tsx                Font, metadata
 │   ├── globals.css               Design tokens and the CE.SDK theme
 │   ├── page.tsx                  Start screen or editor
@@ -83,8 +85,13 @@ src/
 │   └── api/
 │       ├── login/route.ts        Password check, session cookie
 │       └── ai/token/route.ts     Short-lived AI Gateway tokens
+├── components/                   The app's own screens around the editor
+│   ├── StartScreen.tsx           Canvas ratio and size
+│   ├── EditorHost.tsx            Header, editor container, overlays
+│   └── LoadingScreen.tsx
 ├── imgly/config/                 Starter kit configuration, unmodified
 └── editor/
+    ├── Editor.tsx                Mounts CE.SDK, runs the setup
     ├── customization/            Everything that changes the stock editor
     │   ├── index.ts              Entry point: setupEditor()
     │   ├── ids.ts                Ids of all custom panels and components
@@ -96,23 +103,23 @@ src/
     │   ├── canvas.ts             Context menu: variant stepper, "Place object"
     │   ├── areas.ts              Ratio lock of object areas
     │   └── panels/               The two tool panels (builder API)
-    ├── Editor.tsx                Mounts CE.SDK, runs the setup
-    ├── EditorHost.tsx            Header, loading screen, overlays
-    ├── StartScreen.tsx           Canvas ratio and size
-    ├── AreaOverlay.tsx           Drag-to-mark with ratio snapping, area tag
-    ├── scene.ts                  The initial scene: one empty page
-    ├── blocks.ts                 Engine helpers: page, areas, objects
-    ├── backgroundVariants.ts     Background variants up for selection
-    ├── variants.ts               Parallel generation of variants
+    ├── overlays/                 React layers on top of the canvas
+    │   ├── AreaOverlay.tsx       Drag-to-mark with ratio snapping
+    │   ├── AreaTag.tsx           Ratio and size on the selected area
+    │   └── canvasFrame.ts        Screen position of canvas and blocks
+    ├── engine/                   How the PoC's concepts map onto CE.SDK blocks
+    │   ├── scene.ts              The initial scene: one empty page
+    │   ├── blocks.ts             Page, areas, objects
+    │   ├── backgroundVariants.ts Background variants up for selection
+    │   └── objectVariants.ts     Object variants as thumbnails
+    ├── ai/
+    │   ├── gateway.ts            IMG.LY AI Gateway client
+    │   ├── generateVariants.ts   Parallel generation of variants
+    │   ├── placeObject.ts        "Place object"
+    │   └── mock.ts               Local generation without a key
     ├── ratios.ts                 Aspect ratios, page sizes, snapping
-    ├── presets.ts                Ratio and size to page dimensions
     ├── tokens.ts                 Engine-side copies of the colour tokens
-    ├── i18n.ts                   All texts, German and English
-    ├── store.ts                  Shared state between panels and overlays
-    └── ai/
-        ├── gateway.ts            IMG.LY AI Gateway client
-        ├── placeObject.ts        "Place object"
-        └── mock.ts               Local generation without a key
+    └── store.ts                  Shared state between panels and overlays
 ```
 
 ## How it is built
